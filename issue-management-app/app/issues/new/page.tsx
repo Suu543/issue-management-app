@@ -10,6 +10,7 @@ import "easymde/dist/easymde.min.css";
 import { createIssueSchema } from "@/app/validationSchemas";
 import { z } from "zod";
 import ErrorMessage from "@/app/components/ErrorMessage";
+import Spinner from "@/app/components/Spinner";
 
 type IssueForm = z.infer<typeof createIssueSchema>;
 
@@ -24,6 +25,7 @@ const NewIssuePage = () => {
   });
   const router = useRouter();
   const [error, setError] = useState("");
+  const [isSubmitting, setSubmitting] = useState(false);
   console.log(register("title"));
 
   return (
@@ -38,9 +40,11 @@ const NewIssuePage = () => {
         className="space-y-3"
         onSubmit={handleSubmit(async (data) => {
           try {
+            setSubmitting(true);
             await axios.post("/api/issues", data);
             router.push("/issues");
           } catch (error) {
+            setSubmitting(false);
             setError("예상치 못한 오류 발생");
           }
         })}
@@ -59,7 +63,9 @@ const NewIssuePage = () => {
 
         <ErrorMessage>{errors.description?.message}</ErrorMessage>
 
-        <Button>Create New Issue</Button>
+        <Button disabled={isSubmitting}>
+          Create New Issue {isSubmitting && <Spinner />}
+        </Button>
       </form>
     </div>
   );
