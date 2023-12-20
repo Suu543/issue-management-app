@@ -1,12 +1,12 @@
 import { Table } from "@radix-ui/themes";
 import React from "react";
-import prisma from "@/prisma/client";
-import { Link, IssueStatusBadge } from "../components";
+import "react-loading-skeleton/dist/skeleton.css";
 import IssueActions from "./IssueActions";
+import Skeleton from "../../components/Skeleton";
 
-const IssuesPage = async () => {
-  const issues = await prisma.issue.findMany();
-
+const LoadingIssuesPage = () => {
+  // 임시 데이터
+  const issues = [1, 2, 3, 4, 5];
   return (
     <div>
       <IssueActions />
@@ -24,18 +24,18 @@ const IssuesPage = async () => {
         </Table.Header>
         <Table.Body>
           {issues.map((issue) => (
-            <Table.Row key={issue.id}>
+            <Table.Row key={issue}>
               <Table.Cell>
-                <Link href={`/issues/${issue.id}`}>{issue.title}</Link>
+                <Skeleton />
                 <div className="block md:hidden">
-                  <IssueStatusBadge status={issue.status} />
+                  <Skeleton />
                 </div>
               </Table.Cell>
               <Table.Cell className="hidden md:table-cell">
-                <IssueStatusBadge status={issue.status} />
+                <Skeleton />
               </Table.Cell>
               <Table.Cell className="hidden md:table-cell">
-                {issue.createdAt.toDateString()}
+                <Skeleton />
               </Table.Cell>
             </Table.Row>
           ))}
@@ -45,7 +45,4 @@ const IssuesPage = async () => {
   );
 };
 
-export const dynamic = "force-dynamic";
-// export const revalidate = 60;
-
-export default IssuesPage;
+export default LoadingIssuesPage;

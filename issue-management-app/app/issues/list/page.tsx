@@ -1,12 +1,25 @@
 import { Table } from "@radix-ui/themes";
 import React from "react";
-import "react-loading-skeleton/dist/skeleton.css";
+import prisma from "@/prisma/client";
+import { Link, IssueStatusBadge } from "../../components";
 import IssueActions from "./IssueActions";
-import Skeleton from "../components/Skeleton";
+import { Status } from "@prisma/client";
 
-const LoadingIssuesPage = () => {
-  // 임시 데이터
-  const issues = [1, 2, 3, 4, 5];
+interface Props {
+  searchParams: { status: Status };
+}
+
+const IssuesPage = async ({ searchParams }: Props) => {
+  const statuses = Object.values(Status);
+  const status = statuses.includes(searchParams.status)
+    ? searchParams.status
+    : undefined;
+  const issues = await prisma.issue.findMany({
+    where: {
+      status: searchParams.status,
+    },
+  });
+
   return (
     <div>
       <IssueActions />
@@ -24,18 +37,18 @@ const LoadingIssuesPage = () => {
         </Table.Header>
         <Table.Body>
           {issues.map((issue) => (
-            <Table.Row key={issue}>
+            <Table.Row key={issue.id}>
               <Table.Cell>
-                <Skeleton />
+                <Link href={`/issues/${issue.id}`}>{issue.title}</Link>
                 <div className="block md:hidden">
-                  <Skeleton />
+                  <IssueStatusBadge status={issue.status} />
                 </div>
               </Table.Cell>
               <Table.Cell className="hidden md:table-cell">
-                <Skeleton />
+                <IssueStatusBadge status={issue.status} />
               </Table.Cell>
               <Table.Cell className="hidden md:table-cell">
-                <Skeleton />
+                {issue.createdAt.toDateString()}
               </Table.Cell>
             </Table.Row>
           ))}
@@ -45,4 +58,7 @@ const LoadingIssuesPage = () => {
   );
 };
 
-export default LoadingIssuesPage;
+export const dynamic = "force-dynamic";
+// export const revalidate = 60;
+
+export default IssuesPage;
