@@ -5,6 +5,7 @@ import IssueActions from "./IssueActions";
 import { Status } from "@prisma/client";
 import Pagination from "@/app/components/Pagination";
 import IssueTable, { IssueQuery, columnNames } from "./IssueTable";
+import { Metadata } from "next";
 
 interface Props {
   searchParams: IssueQuery;
@@ -47,6 +48,12 @@ const IssuesPage = async ({ searchParams }: Props) => {
       />
     </Flex>
   );
+};
+
+export const metadata: Metadata = {
+  title: "ISSUE-MANAGEMENT-SYSTEM - Issue List",
+  description:
+    "모든 이슈를 확인할 수 있습니다. (페이지네이션, 필터링 그리고 정렬)",
 };
 
 export const dynamic = "force-dynamic";
