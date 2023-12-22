@@ -1,4 +1,5 @@
 "use client";
+
 import { Spinner } from "@/app/components";
 import { AlertDialog, Button, Flex } from "@radix-ui/themes";
 import axios from "axios";
@@ -10,11 +11,11 @@ const DeleteIssueButton = ({ issueId }: { issueId: number }) => {
   const [error, setError] = useState(false);
   const [isDeleting, setDeleting] = useState(false);
 
-  const onDelete = async () => {
+  const deleteIssue = async () => {
     try {
       setDeleting(true);
       await axios.delete("/api/issues/" + issueId);
-      router.push("/issues");
+      router.push("/issues/list");
       router.refresh();
     } catch (error) {
       setDeleting(false);
@@ -26,26 +27,32 @@ const DeleteIssueButton = ({ issueId }: { issueId: number }) => {
     <>
       <AlertDialog.Root>
         <AlertDialog.Trigger>
-          <Button color="red" disabled={isDeleting}>
+          <button
+            className="bg-red-500 rounded-md py-2 text-white text-xs font-bold"
+            disabled={isDeleting}
+          >
             Delete Issue
             {isDeleting && <Spinner />}
-          </Button>
+          </button>
         </AlertDialog.Trigger>
         <AlertDialog.Content>
           <AlertDialog.Title>Confirm Deletion</AlertDialog.Title>
           <AlertDialog.Description>
-            정말 삭제하시길 원합니까?
+            정말 삭제하시길 원하십니까?
           </AlertDialog.Description>
-          <Flex mt="4" gap="3">
+          <Flex mt="4" gap="3" justify="end">
             <AlertDialog.Cancel>
-              <Button variant="soft" color="gray">
+              <button className="bg-white border border-gray-500 rounded-md px-4">
                 Cancel
-              </Button>
+              </button>
             </AlertDialog.Cancel>
             <AlertDialog.Action>
-              <Button onClick={onDelete} color="red">
+              <button
+                className="bg-red-500 rounded-md px-2 text-white text-xs font-bold"
+                onClick={deleteIssue}
+              >
                 Delete Issue
-              </Button>
+              </button>
             </AlertDialog.Action>
           </Flex>
         </AlertDialog.Content>
@@ -53,15 +60,15 @@ const DeleteIssueButton = ({ issueId }: { issueId: number }) => {
       <AlertDialog.Root open={error}>
         <AlertDialog.Content>
           <AlertDialog.Title>Error</AlertDialog.Title>
-          <AlertDialog.Description>이슈 삭제 오류 발생</AlertDialog.Description>
-          <Button
+          <AlertDialog.Description>
+            이슈를 삭제할 수 없습니다.
+          </AlertDialog.Description>
+          <button
+            className="mt-2 bg-gray-200 border border-gray-300 rounded-md px-3 py-1 text-sm"
             onClick={() => setError(false)}
-            mt="4"
-            color="gray"
-            variant="soft"
           >
-            ok
-          </Button>
+            OK
+          </button>
         </AlertDialog.Content>
       </AlertDialog.Root>
     </>
